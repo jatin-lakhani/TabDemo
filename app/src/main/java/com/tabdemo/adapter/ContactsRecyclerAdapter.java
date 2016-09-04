@@ -1,7 +1,9 @@
 package com.tabdemo.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,20 +11,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.tabdemo.R;
 import com.tabdemo.models.ContactInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
+public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecyclerAdapter.ViewHolder> {
     private ArrayList<ContactInfo> data = new ArrayList<>();
     private Context mContext;
 
-    public MyRecyclerAdapter(Context context) {
+    public ContactsRecyclerAdapter(Context context) {
         this.mContext = context;
         initImageLoader();
     }
@@ -39,30 +43,21 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
     public void onBindViewHolder(ViewHolder customViewHolder, int i) {
         ContactInfo feedItem = data.get(i);
 
-//        //Download image using picasso library
-//        Picasso.with(mContext).load(feedItem.getThumbnail())
-//                .error(R.drawable.placeholder)
-//                .placeholder(R.drawable.placeholder)
-//                .into(customViewHolder.imageView);
-//
-//        //Setting text view title
+        //Setting text view title
         customViewHolder.tvName.setText(feedItem.getCaption());
-        customViewHolder.tvCountry.setText(feedItem.getCountry_code());
-
-        if(feedItem.getImagebase64()!=null && feedItem.getImagebase64().length()>0)
-        {
-            imageLoader.displayImage(feedItem.getImagebase64(),customViewHolder.ivProfilePic);
+        customViewHolder.tvCountry.setText(feedItem.getInternational_number());
+        customViewHolder.tvProfilePic.setText("");
+        if (feedItem.getImagebase64() != null && feedItem.getImagebase64().length() > 0) {
+            imageLoader.displayImage(feedItem.getImagebase64(), customViewHolder.ivProfilePic);
             customViewHolder.tvProfilePic.setVisibility(View.GONE);
             customViewHolder.tvProfilePic.setText("");
-        }
-        else
-        {
-            customViewHolder.ivProfilePic.setImageResource(0);
+        } else {
+            customViewHolder.ivProfilePic.setImageResource(R.color.gray);
             customViewHolder.tvProfilePic.setVisibility(View.VISIBLE);
-            customViewHolder.tvProfilePic.setText("");
-            String s[]=feedItem.getCaption().split(" ");
+            // splitting names by space and picking first char from it
+            String s[] = feedItem.getCaption().split(" ");
             for (String s1 : s) {
-                if(s1.length()>0) {
+                if (s1.length() > 0) {
                     customViewHolder.tvProfilePic.append(s1.charAt(0) + "");
                 }
             }
@@ -70,12 +65,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
 
         }
 
-        if(feedItem.getFlagImgBase64()!=null && feedItem.getFlagImgBase64().length()>0)
-        {
-            imageLoader.displayImage(feedItem.getFlagImgBase64(),customViewHolder.ivFlag);
-        }
-        else
-        {
+        Log.e("pos "+i,feedItem.getImagebase64()+" : "+   customViewHolder.tvProfilePic.getText());
+
+        if (feedItem.getFlagImgBase64() != null && feedItem.getFlagImgBase64().length() > 0) {
+            imageLoader.displayImage(feedItem.getFlagImgBase64(), customViewHolder.ivFlag);
+        } else {
             customViewHolder.ivFlag.setImageResource(0);
         }
 
@@ -130,20 +124,22 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
     }
 
     ImageLoader imageLoader;
-    private void initImageLoader()
-    {
-        imageLoader = ImageLoader.getInstance();
-        imageLoader.init(ImageLoaderConfiguration.createDefault(mContext));
 
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.color.gray)
+    private void initImageLoader() {
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true).cacheOnDisk(true)
                 .showImageForEmptyUri(R.color.gray)
                 .showImageOnFail(R.color.gray)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .build();
+                .showImageOnLoading(R.color.gray)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .displayer(new FadeInBitmapDisplayer(400)).build();
 
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+                mContext).memoryCache(new WeakMemoryCache())
+                .defaultDisplayImageOptions(defaultOptions).build();
+
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init(config);
     }
 
 }

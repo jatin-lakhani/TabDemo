@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#F98027</color>
+    <color name="colorPrimaryDark">#F98027</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="gray">#AFAFAF</color>
+
+    <color name="orange_dark">#A55113</color>
+
+    <color name="gray">#F1F1F1</color>
+    <color name="gray_dark">#AFAFAF</color>
+    <color name="black">#000000</color>
+    <color name="bg_contact_list">#393939</color>
 </resources>

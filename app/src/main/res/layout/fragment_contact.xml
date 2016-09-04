@@ -1,6 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:padding="6dp"
+    android:background="@color/bg_contact_list"
     android:layout_height="match_parent"
     tools:context="com.tabdemo.ContactFragment">
 
@@ -10,6 +12,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scrollbarThumbHorizontal="@color/colorPrimary"
         android:background="@drawable/bg_rounded_corner_contact"
         android:padding="5dp"
         android:scrollbars="vertical" />
